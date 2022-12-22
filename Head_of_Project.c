@@ -74,6 +74,16 @@ void Print_List(List_of_Films *list)
     } while (p != list);
 }
 
+//взять строку в файле без переноса на следующую
+char* copyString(char s[]){
+    char* s2;
+    s2 = (char*)malloc(100);
+
+    strcpy(s2, s);
+    s2[strlen(s2)-1] = 0;
+    return (char*)s2;
+}
+
 //печать карточек с фильмами
 void Print_Film(List_of_Films *list){
     List_of_Films *p, *p_next, *p_prev;
