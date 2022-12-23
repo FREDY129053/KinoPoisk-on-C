@@ -74,6 +74,225 @@ void Print_List(List_of_Films *list)
     } while (p != list);
 }
 
+//взять строку в файле без переноса на следующую
+char* copyString(char s[]){
+    char* s2;
+    s2 = (char*)malloc(100);
+
+    strcpy(s2, s);
+    s2[strlen(s2)-1] = 0;
+    return (char*)s2;
+}
+
+//печать карточек с фильмами
+void Print_Film(List_of_Films *list){
+    List_of_Films *p, *p_next, *p_prev;
+    p = list;
+    p_prev = list -> next; //следующий и предущий элемент перепутаны?
+    p_next = list -> prev;
+
+    //взять название фильма без переноса строки(передлать в функцию?)
+    char* copyName;
+    char* copyName_next;
+    char* copyName_prev;
+    copyName = copyString(p -> a_film.name_of_film);
+    copyName_next = copyString(p_next -> a_film.name_of_film);
+    copyName_prev = copyString(p_prev -> a_film.name_of_film);
+
+    printf("________________________________________      ________________________________________\n");
+    printf("|");
+
+    //длина названия фильма (предыдущий)
+    int sizeNameRightPrev;
+    sizeNameRightPrev = strlen (p_prev -> a_film.name_of_film); //количество символов неправильное(буква за 2 символа, остальное за 1)
+    char probelName = '\x20';
+    char plusName = '\x2B';
+    char oneName ='\x31';
+    char comaName ='\x2C';
+    char *s;
+    char *c;
+    char *z;
+    char *x;
+    int countSingleLetter = 0;
+    s = strchr(p_prev -> a_film.name_of_film, probelName);
+    c = strchr(p_prev -> a_film.name_of_film, plusName);
+    z = strchr(p_prev -> a_film.name_of_film, oneName);
+    x = strchr(p_prev -> a_film.name_of_film, comaName);
+    //несколько while, т.к. в одном выдаёт неправильный результат(переделать?)
+    while (s != NULL){
+        countSingleLetter++;
+        s = strchr(s+1, probelName);
+    }
+    while (c != NULL){
+        countSingleLetter++;
+        c = strchr(c+1, plusName);
+    }
+    while (z != NULL){
+        countSingleLetter++;
+        z = strchr(z+1, oneName);
+    }
+    while (x != NULL){
+        countSingleLetter++;
+        x = strchr(x+1, comaName);
+    }
+    sizeNameRightPrev = (sizeNameRightPrev+countSingleLetter)/2; //настоящая длина названия фильма
+    int restNameSizePrev = (40-sizeNameRightPrev)/2; //для прописывания пробелов перед\после названия
+
+    if(sizeNameRightPrev == 40){ //если фильм длинный, то без пробелов
+        printf("%s", copyName_prev);
+    }
+    else {
+        for (int i = 1; i < restNameSizePrev; i++) {//пробелы перед названием
+            printf(" ");
+        }
+        if (sizeNameRightPrev % 2 == 1 && strlen(p_prev->a_film.name_of_film) % 2 == 0) {//для более ровного вывода
+            printf("  ");
+        }
+        else if (sizeNameRightPrev % 2 == strlen(p_prev->a_film.name_of_film) % 2) {//для более ровного вывода
+            printf(" ");
+        }
+        printf("%s", copyName_prev);//название(предыдущее)
+
+        int odd = 0;
+        for (int i = 0; i < restNameSizePrev; i++) {//пробелы после названия
+            if (strlen(p_prev->a_film.name_of_film) % 2 == 0 && odd == 0) {//если кол-во символов чётно, то на 1 пробел меньше
+                odd++;
+            }
+            else {
+                printf(" ");
+            }
+        }
+    }
+
+    printf("|    |");
+
+    //длина названия фильма (следующий)
+    int sizeNameRightNext;
+    sizeNameRightNext = strlen (p_next -> a_film.name_of_film);
+
+    countSingleLetter = 0;
+    s = strchr(p_next -> a_film.name_of_film, probelName);
+    c = strchr(p_next -> a_film.name_of_film, plusName);
+    z = strchr(p_next -> a_film.name_of_film, oneName);
+    x = strchr(p_next -> a_film.name_of_film, comaName);
+    while (s != NULL){
+        countSingleLetter++;
+        s = strchr(s+1, probelName);
+    }
+    while (c != NULL){
+        countSingleLetter++;
+        c = strchr(c+1, plusName);
+    }
+    while (z != NULL){
+        countSingleLetter++;
+        z = strchr(z+1, oneName);
+    }
+    while (x != NULL){
+        countSingleLetter++;
+        x = strchr(x+1, comaName);
+    }
+    sizeNameRightNext = (sizeNameRightNext+countSingleLetter)/2;
+    int restNameSizeNext = (40-sizeNameRightNext)/2;
+    if(sizeNameRightNext == 40){
+        printf("%s", copyName_next);
+    }
+    else {
+        for (int i = 1; i < restNameSizeNext; i++) {
+            printf(" ");
+        }
+        if (sizeNameRightNext % 2 == 1 && strlen(p_next->a_film.name_of_film) % 2 == 0){
+            printf("  ");
+        }
+        else if (sizeNameRightNext % 2 == strlen(p_next->a_film.name_of_film) % 2){
+            printf(" ");
+        }
+        printf("%s", copyName_next);//название(следующее)
+        int odd = 0;
+        for (int i = 0; i < restNameSizeNext; i++){
+            if (strlen(p_prev->a_film.name_of_film) % 2 == 0 && odd == 0) {
+                odd++;
+            } else {
+                printf(" ");
+            }
+        }
+    }
+
+    printf("|\n");
+    printf("|                      ________________________________________                      |\n"); //40 символов
+
+    //длина названия фильма (выбранный)
+    int sizeNameRight;
+    sizeNameRight = strlen (p -> a_film.name_of_film);
+
+    countSingleLetter = 0;
+    s = strchr(p -> a_film.name_of_film, probelName);
+    c = strchr(p -> a_film.name_of_film, plusName);
+    z = strchr(p -> a_film.name_of_film, oneName);
+    x = strchr(p -> a_film.name_of_film, comaName);
+    while (s != NULL){
+        countSingleLetter++;
+        s = strchr(s+1, probelName);
+    }
+    while (c != NULL){
+        countSingleLetter++;
+        c = strchr(c+1, plusName);
+    }
+    while (z != NULL){
+        countSingleLetter++;
+        z = strchr(z+1, oneName);
+    }
+    while (x != NULL){
+        countSingleLetter++;
+        x = strchr(x+1, comaName);
+    }
+    sizeNameRight = (sizeNameRight+countSingleLetter)/2;//длина названия фильма
+    printf("|______________________|");
+    int restNameSize = (40-sizeNameRight)/2;//считаем пробелы перед/после названия
+    if(sizeNameRight == 40){
+        printf("%s", copyName);
+    }
+    else {
+        for (int i = 1; i < restNameSize; i++) {//пробелы перед названием
+            printf(" ");
+        }
+        if (sizeNameRight % 2 == 1 && strlen(p->a_film.name_of_film) % 2 == 0) {
+            printf("  ");
+        } else if (sizeNameRight % 2 == strlen(p->a_film.name_of_film) % 2) {
+            printf(" ");
+        }
+        printf("%s", copyName);//печать названия выбранного фильма
+        int odd = 0;
+        for (int i = 0; i < restNameSize; i++) {//пробелы после названия
+            if (strlen(p->a_film.name_of_film) % 2 == 0 && odd == 0) {
+                odd++;
+            } else {
+                printf(" ");
+            }
+        }
+    }
+
+    printf("|_____________________|\n");
+    printf("                       |");
+
+    //рейтинг в виде звёзд
+    char *ratingCurrent = p -> a_film.rating_of_film;
+    float Num = atof(ratingCurrent);
+    printf("              ");
+    for(int i=1; i<11; i++){
+        if(Num > i){
+            printf("\u2605");
+        }
+        else if(Num < i){
+            printf("\u2606");
+        }
+    }
+    printf("            ");
+    printf("|");
+    printf("\n                       |_______________________________________|\n");
+    printf("                       \u2B05                                     \u27A1\n"); //стрелки для красоты
+}
+
+
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
@@ -106,7 +325,9 @@ int main()
         Add_Films(list_of_films, a_films);
     }
 
-    Print_List(list_of_films);
+    //Print_List(list_of_films);
+    
+    Print_Film(list_of_films);
 
     return 0;
 }
